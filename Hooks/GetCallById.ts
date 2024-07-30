@@ -1,0 +1,33 @@
+import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
+import { useEffect, useState } from "react";
+
+export const GetCallById = (id: string | string[]) => {
+  const [call, setCall] = useState<Call>();
+  const [callLoading, setCallLoading] = useState<boolean>(true)
+  const client = useStreamVideoClient();
+    
+
+  useEffect(() => {
+    if (!client) return;
+
+     const getCall = async () => {
+
+      try {
+        const {calls} = await client.queryCalls({
+          filter_conditions:  {id:id},
+        });
+  
+        if(calls.length > 0) setCall(calls[0]);
+        console.log(calls,'callssssssssssssssssssssssssssssssssssssssssssssss');
+        
+        setCallLoading(false)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    getCall()
+
+  }, [client, id]);
+
+  return {call, callLoading}
+};
